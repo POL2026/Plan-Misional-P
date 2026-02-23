@@ -1,9 +1,9 @@
 
 import React, { useMemo } from 'react';
-import { ArrowLeft, Sprout, Heart, Settings2, ChevronRight } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { AreaConfig, ActionItem, AreaData } from '../types';
 import ActionTable from './ActionTable';
-import CircularProgress from './CircularProgress';
+import ProgressBar from './ProgressBar';
 import { getIcon } from '../constants';
 
 interface AreaWorkspaceProps {
@@ -74,35 +74,72 @@ const AreaWorkspace: React.FC<AreaWorkspaceProps> = ({ config, data, onBack, onU
   const isNewMembersArea = config.id === 'new_members';
   const isReturningArea = config.id === 'returning';
   
-  let questions: string[] = [];
+  const renderProgressContent = () => {
+    if (progress === 100) {
+      return (
+        <p className="text-base text-gray-500 mt-4 leading-relaxed font-medium">
+          ¡Excelente trabajo! Has completado todas las metas de esta área.
+        </p>
+      );
+    }
 
-  if (isFindingArea) {
-    questions = [
-      "¿Cómo encontrar a más personas para enseñar?",
-      "¿Cómo ayudar a los miembros a experimentar el gozo de compartir el Evangelio?"
-    ];
-  } else if (isTeachingArea) {
-    questions = [
-      "¿Cómo apoyar a las personas a quienes los misioneros estén enseñando?",
-      "¿Cómo ayudarles a sentirse bienvenidos en las reuniones y actividades del barrio?"
-    ];
-  } else if (isNewMembersArea) {
-    questions = [
-      "¿Cómo ayudar a los miembros nuevos a progresar espiritualmente?",
-      "¿Cómo ayudarles a sentirse bienvenidos en las reuniones y actividades del barrio?"
-    ];
-  } else if (isReturningArea) {
-    questions = [
-      "¿Cómo ayudar a los miembros que regresan a la actividad a progresar espiritualmente?",
-      "¿Cómo ayudarles a sentirse bienvenidos en las reuniones y actividades del barrio?"
-    ];
-  }
+    let questions: string[] = [];
+
+    if (isFindingArea) {
+      questions = [
+        "¿Cómo encontrar a más personas para enseñar?",
+        "¿Cómo ayudar a los miembros a experimentar el gozo de compartir el Evangelio?"
+      ];
+    } else if (isTeachingArea) {
+      questions = [
+        "¿Cómo apoyar a las personas a quienes los misioneros estén enseñando?",
+        "¿Cómo ayudarles a sentirse bienvenidos en las reuniones y actividades del barrio?"
+      ];
+    } else if (isNewMembersArea) {
+      questions = [
+        "¿Cómo ayudar a los miembros nuevos a progresar espiritualmente?",
+        "¿Cómo ayudarles a sentirse bienvenidos en las reuniones y actividades del barrio?"
+      ];
+    } else if (isReturningArea) {
+      questions = [
+        "¿Cómo ayudar a los miembros que regresan a la actividad a progresar espiritualmente?",
+        "¿Cómo ayudarles a sentirse bienvenidos en las reuniones y actividades del barrio?"
+      ];
+    }
+
+    if (questions.length > 0) {
+      return (
+        <div className="mt-6 flex flex-col gap-4">
+          {questions.map((q, idx) => (
+            <div key={idx} className="flex gap-3">
+              <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white mt-0.5 shadow-sm ${
+                 config.color === 'orange' ? 'bg-orange-400' :
+                 config.color === 'amber' ? 'bg-amber-400' :
+                 config.color === 'sky' ? 'bg-sky-400' : 'bg-emerald-400'
+              }`}>
+                {idx + 1}
+              </span>
+              <p className="text-slate-700 font-medium text-lg leading-snug">
+                {q}
+              </p>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <p className="text-sm text-gray-500 mt-4 leading-relaxed italic">
+        “Cuando el rendimiento se mide, dicho rendimiento mejora. Cuando el rendimiento se mide y se informa, el ritmo de mejoramiento se acelera” (Thomas S. Monson)
+      </p>
+    );
+  };
 
   return (
     <div className={`min-h-screen pb-20 transition-colors duration-500 ${getPageBackground(config.color)}`}>
       {/* Header with Gradient */}
-      <header className={`sticky top-0 z-30 shadow-none md:shadow-md transition-colors duration-300 ${getHeaderStyles(config.color)}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
+      <header className={`sticky top-0 z-30 shadow-md transition-colors duration-300 ${getHeaderStyles(config.color)}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button 
               onClick={onBack}
@@ -122,64 +159,32 @@ const AreaWorkspace: React.FC<AreaWorkspaceProps> = ({ config, data, onBack, onU
               </div>
             </div>
           </div>
-
-          {/* Circular Progress Bar in Header - Simplified */}
-          <div>
-            <CircularProgress 
-              percentage={progress} 
-              size={40} 
-              strokeWidth={4} 
-              color="text-white"
-              trackColor="text-white/30"
-              textColor="text-white"
-            />
-          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-0 md:mt-0 py-4 md:py-8 animate-in slide-in-from-bottom-4 duration-500 relative z-10">
-         
-         {/* Enfoque Section - Sticky Wrapper */}
-         <div className={`sticky top-16 md:top-20 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pb-4 md:pb-6 mb-6 md:mb-8 transition-colors duration-300 ${getPageBackground(config.color)} print:static print:bg-transparent print:p-0 print:m-0 print:mb-4`}>
-             <div className="bg-white rounded-3xl p-3 shadow-lg md:shadow-sm border border-slate-100 print:shadow-none print:border-slate-300">
-                <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2 text-slate-700">
-                        <Settings2 className="w-4 h-4 text-slate-400" />
-                        <h2 className="font-bold text-base">Enfoque</h2>
-                    </div>
-                </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in slide-in-from-bottom-4 duration-500">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Left/Top: Progress & Info */}
+          <div className="lg:col-span-4 xl:col-span-3 sticky top-20 lg:top-24 z-20 lg:z-0 -mx-4 px-4 lg:mx-0 lg:px-0 py-2 lg:py-0 bg-white/80 backdrop-blur-md lg:bg-transparent shadow-sm lg:shadow-none border-b border-gray-200/50 lg:border-none">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+               <ProgressBar percentage={progress} color={config.color} />
+               {renderProgressContent()}
+            </div>
+          </div>
 
-                <div className={`relative bg-white border rounded-xl p-3 shadow-sm transition-colors ${
-                    config.color === 'orange' ? 'border-orange-100 hover:border-orange-200' :
-                    config.color === 'amber' ? 'border-amber-100 hover:border-amber-200' :
-                    config.color === 'sky' ? 'border-sky-100 hover:border-sky-200' :
-                    config.color === 'emerald' ? 'border-emerald-100 hover:border-emerald-200' :
-                    'border-slate-100 hover:border-slate-200'
-                } print:border-slate-300 print:shadow-none`}>
-                    <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-xl ${
-                        config.color === 'orange' ? 'bg-orange-500' :
-                        config.color === 'amber' ? 'bg-amber-500' :
-                        config.color === 'sky' ? 'bg-sky-500' :
-                        config.color === 'emerald' ? 'bg-emerald-500' :
-                        'bg-slate-500'
-                    } print:bg-slate-800`}></div>
-                    <div className="pl-3">
-                        <p className="text-sm text-slate-700 font-medium leading-relaxed break-words whitespace-pre-wrap print:text-black">
-                            {questions.join(" ") || "Preguntas no definidas"}
-                        </p>
-                    </div>
-                </div>
-             </div>
-         </div>
-
-         <ActionTable 
-            items={data.items}
-            color={config.color}
-            onUpdate={handleUpdateItem}
-            onDelete={handleDeleteItem}
-            onAdd={handleAddItem}
-         />
+          {/* Right/Bottom: Cards Grid */}
+          <div className="lg:col-span-8 xl:col-span-9">
+             <ActionTable 
+                items={data.items}
+                color={config.color}
+                onUpdate={handleUpdateItem}
+                onDelete={handleDeleteItem}
+                onAdd={handleAddItem}
+             />
+          </div>
+        </div>
       </main>
     </div>
   );

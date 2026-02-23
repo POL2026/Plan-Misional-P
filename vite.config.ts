@@ -1,23 +1,35 @@
-import path from 'path';
-import { defineConfig, loadEnv } from 'vite';
-import react from '@vitejs/plugin-react';
+export type AreaId = 'finding' | 'teaching' | 'new_members' | 'returning';
 
-export default defineConfig(({ mode }) => {
-    const env = loadEnv(mode, '.', '');
-    return {
-      server: {
-        port: 3000,
-        host: '0.0.0.0',
-      },
-      plugins: [react()],
-      define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-      },
-      resolve: {
-        alias: {
-          '@': path.resolve(__dirname, '.'),
-        }
-      }
-    };
-});
+export interface ActionItem {
+  id: string;
+  what: string;
+  how: string;
+  when: string;
+  isCompleted: boolean;
+}
+
+export interface AreaData {
+  id: AreaId;
+  title: string;
+  description: string;
+  color: string; // Tailwind color class prefix (e.g., 'blue', 'emerald')
+  iconName: string;
+  items: ActionItem[];
+}
+
+export interface ExampleData {
+  what: string;
+  how: string;
+  when: string;
+}
+
+export interface AreaConfig {
+  id: AreaId;
+  title: string;
+  shortTitle: string;
+  subtitle?: string; // Added optional subtitle
+  description: string;
+  color: string;
+  iconName: string;
+  examples: ExampleData[];
+}

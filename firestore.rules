@@ -1,0 +1,40 @@
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+
+// =================================================================
+// CONFIGURACIÓN DE FIREBASE (PLAN MISIONAL EP)
+// =================================================================
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAs6naiIIUhf5f6MAh9KTbfOE5HDy0Vm8o",
+  authDomain: "plan-misional-ep.firebaseapp.com",
+  projectId: "plan-misional-ep",
+  storageBucket: "plan-misional-ep.firebasestorage.app",
+  messagingSenderId: "1009708571935",
+  appId: "1:1009708571935:web:a8bf6ba2d3824cf76fa42a"
+};
+
+// Inicializamos la conexión
+// Verificamos apps.length para evitar error de reinicialización
+if (!firebase.apps.length) {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    console.log("Firebase inicializado correctamente.");
+  } catch (error) {
+    console.error("Error al inicializar Firebase:", error);
+  }
+}
+
+// Inicializamos la base de datos
+export const db = firebase.firestore();
+
+// NOTA: La persistencia offline (enablePersistence) ha sido deshabilitada temporalmente.
+/*
+try {
+  db.enablePersistence().catch((err) => {
+    console.warn("Persistencia offline no disponible:", err.code);
+  });
+} catch (e) {
+  console.warn("Error config persistencia:", e);
+}
+*/
